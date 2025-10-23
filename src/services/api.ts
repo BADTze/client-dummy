@@ -1,19 +1,21 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-  headers: { "Content-Type": "application/json" },
-});
+const API_URL = "http://localhost:3000/api/auth";
 
 export const authApi = {
-  login: async (email: string, nik: string) => {
-    const res = await api.post("/auth/login", { email, nik });
+  register: async (data: {
+    nik: string;
+    nama: string;
+    email: string;
+    password: string;
+    jabatan?: string;
+  }) => {
+    const res = await axios.post(`${API_URL}/register`, data);
     return res.data;
   },
-  register: async (data: any) => {
-    const res = await api.post("/auth/register", data);
+
+  login: async (data: { email: string; password: string }) => {
+    const res = await axios.post(`${API_URL}/login`, data);
     return res.data;
   },
 };
-
-export default api;

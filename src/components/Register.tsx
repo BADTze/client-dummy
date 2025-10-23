@@ -8,6 +8,7 @@ export default function Register() {
     nik: "",
     nama: "",
     email: "",
+    password: "",
     jabatan: "",
   });
   const [error, setError] = useState("");
@@ -16,58 +17,46 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await authApi.register(form);
+      alert("Registrasi berhasil!");
       navigate("/login");
     } catch (err: any) {
-      setError("Gagal mendaftarkan akun!");
+      console.error(err);
+      setError(err.response?.data?.message || "Gagal registrasi");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-3xl font-bold mb-6">Register</h1>
       <form
-        onSubmit={handleRegister}
-        className="bg-white p-6 rounded-lg shadow-lg w-96"
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded-lg p-6 w-96"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Register</h2>
-
         {error && <p className="text-red-500 text-center mb-2">{error}</p>}
 
-        <input
-          name="nik"
-          placeholder="NIK"
-          className="border rounded w-full p-2 mb-2"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="nama"
-          placeholder="Nama"
-          className="border rounded w-full p-2 mb-2"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          className="border rounded w-full p-2 mb-2"
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="jabatan"
-          placeholder="Jabatan (opsional)"
-          className="border rounded w-full p-2 mb-3"
-          onChange={handleChange}
-        />
+        {["nik", "nama", "email", "password", "jabatan"].map((field) => (
+          <div key={field} className="mb-3">
+            <label className="block text-sm font-medium capitalize mb-1">
+              {field}
+            </label>
+            <input
+              type={field === "password" ? "password" : "text"}
+              name={field}
+              value={(form as any)[field]}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              required={field !== "jabatan"}
+            />
+          </div>
+        ))}
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
         >
           Register
         </button>
